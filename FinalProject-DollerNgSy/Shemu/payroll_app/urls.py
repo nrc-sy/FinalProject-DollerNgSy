@@ -1,6 +1,22 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
-    path('', views.test_page, name='test'), # this is only to test the base. remove once completed
+    path('', views.test_page, name='test'),  # temporary; ill remove soon
+    path('employees/', views.employee_list, name='employee_list'),
+    
 ]
+
+
+
+
+
+
+
+
+'''
+Reference(s):
+- https://docs.djangoproject.com/en/6.0/topics/auth/default/
+'''
+
