@@ -35,8 +35,8 @@ footer {
 }
 
 .nav-btn:hover {
-    color: #fff;
-    background-color: #444;
+    color: #d6f4b8; 
+    background-color: rgba(166, 255, 77, 0.1); 
 }
 
 .brand-text {
