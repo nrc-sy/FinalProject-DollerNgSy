@@ -112,10 +112,4 @@ hr {
 .card {
     border-radius: 16px !important;
 }
-
-input, select {
-    width: 100%;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #ced4da;
-}
+ 
