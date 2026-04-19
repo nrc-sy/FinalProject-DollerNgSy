@@ -61,19 +61,24 @@ def add_overtime(request, pk):
 @login_required
 def create_employee(request):
     if request.method == "POST":
-        name = request.POST.get('name')
-        id_number = request.POST.get('id_number')
-        rate = request.POST.get('rate')
-        allowance = request.POST.get('allowance')
-        if allowance == "" or allowance is None:
-            allowance = 0
+        name = request.POST.get('name', '')
+        id_number = request.POST.get('id_number', '')
+        rate = request.POST.get('rate', '')
+        allowance = request.POST.get('allowance', '') or 0
 
-        Employee.objects.create(
-            name=name,
-            id_number=id_number,
-            rate=rate,
-            allowance=allowance
-        )
+        if not all([name, id_number, rate]):
+            return render(request, 'payroll_app/create_employee.html', {'error': 'Please fill in all required fields'})
+
+        try:
+            rate = float(rate)
+            allowance = float(allowance)
+        except ValueError:
+            return render(request, 'payroll_app/create_employee.html', {'error': 'Rate and allowance must be valid numbers'})
+
+        if Employee.objects.filter(id_number=id_number).exists():
+            return render(request, 'payroll_app/create_employee.html', {'error': 'Employee ID already exists'})
+
+        Employee.objects.create(name=name, id_number=id_number, rate=rate,allowance=allowance)
 
         return redirect('employee_list')
 
@@ -84,10 +89,23 @@ def create_employee(request):
 def update_employee(request, pk):
     employee = get_object_or_404(Employee, pk=pk)
     if request.method == "POST":
-        form = EmployeeForm(request.POST, instance=employee)
-        if form.is_valid():
-            form.save()
-            return redirect('employee_list')
-    else:
-        form = EmployeeForm(instance=employee)
-    return render(request, 'payroll_app/update_employee.html', {'form': form, 'employee': employee})
+        name = request.POST.get('name', '')
+        rate = request.POST.get('rate', '')
+        allowance = request.POST.get('allowance', '') or 0
+        overtime_pay = request.POST.get('overtime_pay', '') or 0
+
+        if not all([name, rate]):
+            return render(request, 'payroll_app/update_employee.html', {'employee': employee,'error': 'Please fill in required fields'})
+
+        try:
+            employee.rate = float(rate)
+            employee.allowance = float(allowance)
+            employee.overtime_pay = float(overtime_pay)
+        except ValueError:
+            return render(request, 'payroll_app/update_employee.html', {'employee': employee,'error': 'Invalid input'})
+
+        employee.name = name
+        employee.save()
+
+        return redirect('employee_list')
+    return render(request, 'payroll_app/update_employee.html', {'employee': employee})
