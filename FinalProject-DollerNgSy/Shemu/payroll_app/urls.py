@@ -5,7 +5,8 @@ from . import views
 urlpatterns = [
     path('', views.test_page, name='test'),  # temporary; ill remove soon
     path('employees/', views.employee_list, name='employee_list'),
-    
+    path('employees/create/', views.create_employee, name='create_employee'),
+    path('employees/update/<int:pk>/', views.update_employee, name='update_employee'),
 ]
 
 
