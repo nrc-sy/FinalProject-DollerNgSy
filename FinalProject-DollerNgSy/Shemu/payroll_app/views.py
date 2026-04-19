@@ -34,7 +34,7 @@ def create_employee(request):
         form = EmployeeForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('employees_page')  # assumes you have an employees list view
+            return redirect('employee_list')  # employees list view need to be added/completed pa rin
     else:
         form = EmployeeForm()
     return render(request, 'payroll_app/create_employee.html', {'form': form})
@@ -45,7 +45,7 @@ def update_employee(request, pk):
         form = EmployeeForm(request.POST, instance=employee)
         if form.is_valid():
             form.save()
-            return redirect('employees_page')
+            return redirect('employee_list')
     else:
         form = EmployeeForm(instance=employee)
     return render(request, 'payroll_app/update_employee.html', {'form': form, 'employee': employee})
