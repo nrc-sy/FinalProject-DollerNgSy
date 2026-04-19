@@ -1,3 +1,4 @@
+/* base.html */
 body {
     padding-top: 90px;
     padding-bottom: 70px;
@@ -46,6 +47,7 @@ footer {
     color: white;
 }
 
+/* employees.html */
 .welcome-text {
     color: #14532d;
     font-weight: 600;
@@ -109,6 +111,7 @@ hr {
     border-bottom-right-radius: 10px;
 }
 
+/* create_employees.html */
 .card {
     border-radius: 16px !important;
 }
