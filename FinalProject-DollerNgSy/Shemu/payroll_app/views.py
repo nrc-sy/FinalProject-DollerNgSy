@@ -1,4 +1,4 @@
-# Tashannah Doller, ; Gide Ng, ; Nathan Riley Sy, 244311
+# Tashannah Doller, 245541 ; Gide Ng, ; Nathan Riley Sy, 244311
 # April , 2026
 
 '''
@@ -25,27 +25,68 @@ from .forms import EmployeeForm
 def test_page(request): # this is only to test the base. remove once completed
     return render(request, 'payroll_app/base.html')
 
+# Employee Page
 @login_required(login_url='login')
 def employee_list(request):
-    return render(request, 'payroll_app/employees.html') # will update code tom
+    employees = Employee.objects.all()
+    return render(request, 'payroll_app/employees.html', {'employees': employees})
 
+# Delete Employeee
+@login_required(login_url='login')
+def delete_employee(request, pk):
+    employee = get_object_or_404(Employee, pk=pk)
+    employee.delete()
+    return redirect('employee_list')
+
+# Add Overtime
+@login_required(login_url='login')
+def add_overtime(request, pk):
+    employee = get_object_or_404(Employee, pk=pk)
+
+    if request.method == "POST":
+        hours = request.POST.get('hours')
+
+        try:
+            hours = float(hours)
+        except (TypeError, ValueError):
+            hours = 0
+
+        overtime_amount = (employee.rate / 160) * 1.5 * hours
+        employee.overtime_pay = (employee.overtime_pay or 0) + overtime_amount
+        employee.save()
+
+    return redirect('employee_list')
+
+# Create Employee
+@login_required
 def create_employee(request):
     if request.method == "POST":
-        form = EmployeeForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('employee_list')  # employees list view need to be added/completed pa rin
-    else:
-        form = EmployeeForm()
-    return render(request, 'payroll_app/create_employee.html', {'form': form})
+        name = request.POST.get('name')
+        id_number = request.POST.get('id_number')
+        rate = request.POST.get('rate')
+        allowance = request.POST.get('allowance')
+        if allowance == "" or allowance is None:
+            allowance = 0
 
+        Employee.objects.create(
+            name=name,
+            id_number=id_number,
+            rate=rate,
+            allowance=allowance
+        )
+
+        return redirect('employee_list')
+
+    return render(request, 'payroll_app/create_employee.html')
+
+# Update Employee
 def update_employee(request, pk):
     employee = get_object_or_404(Employee, pk=pk)
     if request.method == "POST":
         form = EmployeeForm(request.POST, instance=employee)
         if form.is_valid():
             form.save()
-            return redirect('employee_list')
+            return redirect('employees_list')
     else:
         form = EmployeeForm(instance=employee)
     return render(request, 'payroll_app/update_employee.html', {'form': form, 'employee': employee})

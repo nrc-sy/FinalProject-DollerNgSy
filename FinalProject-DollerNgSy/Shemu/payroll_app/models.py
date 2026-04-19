@@ -16,8 +16,10 @@ comments of my program.
 '''
 
 from django.db import models
+from django.contrib.auth.models import User
 
 class Employee(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=200)
     id_number = models.CharField(max_length=200, primary_key=True) # use <str:pk> when linking here
     rate = models.FloatField()
